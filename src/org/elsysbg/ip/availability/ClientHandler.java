@@ -53,6 +53,8 @@ public class ClientHandler implements Runnable {
 				return info(cmds);
 			case "listavailable":
 				return listavailable(cmds);
+			case "listabsent":
+				return listabsent(cmds);
 			case "shutdown":
 				return shutdown(cmds);
 			default:
@@ -106,6 +108,19 @@ public class ClientHandler implements Runnable {
 			String result = "ok";
 			for (User next : users.values()) {
 				if (next.isLogged()) {
+					result += ":" + next.getName();
+				}
+			}
+			return result;
+		}
+		return "error:notlogged";
+	}
+	
+	private String listabsent(String[] cmds) {
+		if (isLoggedIn(cmds[0])) {
+			String result = "ok";
+			for (User next : users.values()) {
+				if (!next.isLogged()) {
 					result += ":" + next.getName();
 				}
 			}
