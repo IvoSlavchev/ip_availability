@@ -7,24 +7,41 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.HashMap;
 
-public class ClientHandler {
+public class ClientHandler implements Runnable {
 	private final Map<String, User> users = new HashMap<String, User>();
-	private boolean running = true;
+	private final AvailabilityServer availabilityServer;
+	private final Socket socket;
+	private boolean closed;
 	
-	public void run(Socket socket) throws IOException {
-		final PrintStream out = new PrintStream(socket.getOutputStream());
-		final Scanner scanner = new Scanner(socket.getInputStream());
-		while (running) {					
-			out.println("Enter command: ");
-			final String line = scanner.nextLine();
-			out.println(execute(line, socket));
-			
-		}
-		scanner.close();
-		out.close();
+	public ClientHandler(AvailabilityServer availabilityServer, Socket socket) {
+		this.availabilityServer = availabilityServer;
+		this.socket = socket;
+		this.closed = false;
 	}
 	
-	public String execute(String command, Socket socket) {
+	@Override
+	public void run() {
+		try {
+			final PrintStream out = new PrintStream(socket.getOutputStream());
+			final Scanner scanner = new Scanner(socket.getInputStream());
+			out.println("Enter command: ");
+			while (scanner.hasNextLine()) {									
+				final String line = scanner.nextLine();				
+				out.println(execute(line));
+				out.println("Enter command: ");
+			}
+			scanner.close();
+			out.close();
+		} catch (IOException e) {
+			if (closed) {  
+				e.printStackTrace();
+			}
+		} finally {
+			availabilityServer.onClientStopped(this);
+		}
+	}
+	
+	public String execute(String command) throws IOException {
 		final String[] cmds = command.split(":");
 		if(cmds.length > 1) {
 			switch (cmds[1]) {
@@ -97,11 +114,16 @@ public class ClientHandler {
 		return "error:notlogged";
 	}
 	
-	private String shutdown(String[] cmds) {
+	private String shutdown(String[] cmds) throws IOException {
 		if (isLoggedIn(cmds[0])) {
-			running = false;
+			availabilityServer.stopServer();
 			return "ok";
 		}
 		return "error:notlogged";
+	}
+
+	public void stopClient() throws IOException {
+		socket.close();
+		closed = true;
 	}
 }
