@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
 
 public class ClientHandler implements Runnable {
@@ -82,6 +83,7 @@ public class ClientHandler implements Runnable {
 			users.get(cmds[0]).setLogged(true);
 			int counter = users.get(cmds[0]).getLoginCounter();
 			users.get(cmds[0]).setLoginCounter(++counter);
+			users.get(cmds[0]).setTimes(new Date());
 			return "ok";
 		}
 		return "User already logged.";
@@ -90,6 +92,7 @@ public class ClientHandler implements Runnable {
 	private String logout(String[] cmds) {
 		if (isLoggedIn(cmds[0])) {
 			users.get(cmds[0]).setLogged(false);
+			users.get(cmds[0]).setTimes(new Date());
 			return "ok";
 		}
 		return "error:notlogged";

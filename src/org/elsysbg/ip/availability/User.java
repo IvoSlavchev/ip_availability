@@ -1,8 +1,13 @@
 package org.elsysbg.ip.availability;
 
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 
 public class User {
+	private final List<Date> times = new ArrayList<Date>();
 	private String name;
 	private boolean logged;
 	private int loginCounter;
@@ -13,6 +18,7 @@ public class User {
 		this.logged = logged;
 		this.loginCounter = 1;
 		this.socket = socket;
+		this.times.add(new Date());
 	}
 	
 	public String getName() {
@@ -38,5 +44,11 @@ public class User {
 	}
 	public void setSocket(Socket socket) {
 		this.socket = socket;
+	}
+	public List<Date> getTimes() {
+		return times;
+	}
+	public void setTimes(Date date) {
+		this.times.add(date);
 	}
 }
