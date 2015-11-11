@@ -8,9 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AvailabilityServer {
+	private final List<ClientHandler> clients = Collections.synchronizedList(new LinkedList<ClientHandler>());
+	
 	private final int port;
 	private boolean running;
-	private final List<ClientHandler> clients = Collections.synchronizedList(new LinkedList<ClientHandler>());
 	
 	public AvailabilityServer(int port) {
 		this.port = port;
@@ -18,8 +19,7 @@ public class AvailabilityServer {
 	
 	public void startServer() throws IOException {
 		setRunning();
-		final ServerSocket serverSocket = new ServerSocket(port);
-		
+		final ServerSocket serverSocket = new ServerSocket(port);	
 		while(isRunning()) {
 			final Socket socket = serverSocket.accept();
 			final ClientHandler clientHandler = new ClientHandler(this, socket);
@@ -41,8 +41,7 @@ public class AvailabilityServer {
 	}
 
 	public synchronized void stopServer() throws IOException {
-		running = false;
-		
+		running = false;		
 		for (ClientHandler next : clients) {
 			next.stopClient();
 		}

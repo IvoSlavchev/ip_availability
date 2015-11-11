@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 public class ClientHandler implements Runnable {
 	private final Map<String, User> users = new HashMap<String, User>();
+	
 	private final AvailabilityServer availabilityServer;
 	private final Socket socket;
 	private boolean closed;

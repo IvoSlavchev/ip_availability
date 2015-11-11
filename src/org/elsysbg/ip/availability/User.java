@@ -8,7 +8,9 @@ import java.util.List;
 
 public class User {
 	final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH'_'mm'_'ss.SSSZ");
+	
 	private final List<String> times = new ArrayList<String>();
+	
 	private String name;
 	private boolean logged;
 	private int loginCounter;
@@ -19,9 +21,7 @@ public class User {
 		this.logged = logged;
 		this.loginCounter = 1;
 		this.socket = socket;		
-		Date date = new Date();
-        String dateFormatted = DATE_FORMAT.format(date);
-		this.times.add(dateFormatted);
+		this.times.add(DATE_FORMAT.format(new Date()));
 	}
 	
 	public String getName() {
@@ -52,7 +52,6 @@ public class User {
 		return times;
 	}
 	public void setTimes(Date date) {
-		String dateFormatted = DATE_FORMAT.format(date);
-		this.times.add(dateFormatted);
+		this.times.add(DATE_FORMAT.format(date));
 	}
 }
