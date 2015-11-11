@@ -86,7 +86,7 @@ public class ClientHandler implements Runnable {
 			users.get(cmds[0]).setTimes(new Date());
 			return "ok";
 		}
-		return "User already logged.";
+		return "error:alreadyloggedin";
 	}
 	
 	private String logout(String[] cmds) {
@@ -100,7 +100,11 @@ public class ClientHandler implements Runnable {
 	
 	private String info(String[] cmds) {
 		if (isLoggedIn(cmds[0])) {
-			return "ok:" + cmds[2] + ":" + isLoggedIn(cmds[2]) + ":" + users.get(cmds[2]).getLoginCounter();
+			String userTimes = "";
+			for (String next : users.get(cmds[2]).getTimes()) {
+				userTimes += ":" + next;
+			}
+			return "ok:" + cmds[2] + ":" + isLoggedIn(cmds[2]) + ":" + users.get(cmds[2]).getLoginCounter() + userTimes;
 		}
 		return "error:notlogged";
 	}

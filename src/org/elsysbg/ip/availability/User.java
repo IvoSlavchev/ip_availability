@@ -1,24 +1,29 @@
 package org.elsysbg.ip.availability;
 
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
 public class User {
-	private final List<Date> times = new ArrayList<Date>();
+	private final List<String> times = new ArrayList<String>();
 	private String name;
 	private boolean logged;
 	private int loginCounter;
 	private Socket socket;
 	
+	final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH'_'mm'_'ss.SSSZ");
+	
 	public User(String name, boolean logged, Socket socket) {
 		this.name = name;
 		this.logged = logged;
 		this.loginCounter = 1;
-		this.socket = socket;
-		this.times.add(new Date());
+		this.socket = socket;		
+		Date date = new Date();
+        String dateFormatted = DATE_FORMAT.format(date);
+		this.times.add(dateFormatted);
 	}
 	
 	public String getName() {
@@ -45,10 +50,11 @@ public class User {
 	public void setSocket(Socket socket) {
 		this.socket = socket;
 	}
-	public List<Date> getTimes() {
+	public List<String> getTimes() {
 		return times;
 	}
 	public void setTimes(Date date) {
-		this.times.add(date);
+		String dateFormatted = DATE_FORMAT.format(date);
+		this.times.add(dateFormatted);
 	}
 }
