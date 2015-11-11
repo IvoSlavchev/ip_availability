@@ -24,11 +24,11 @@ public class ClientHandler implements Runnable {
 		try {
 			final PrintStream out = new PrintStream(socket.getOutputStream());
 			final Scanner scanner = new Scanner(socket.getInputStream());
-			out.println("Enter command: ");
+			out.println("Vuvedi komanda: ");
 			while (scanner.hasNextLine()) {									
 				final String line = scanner.nextLine();				
 				out.println(execute(line));
-				out.println("Enter command: ");
+				out.println("Vuvedi komanda: ");
 			}
 			scanner.close();
 			out.close();
@@ -84,7 +84,7 @@ public class ClientHandler implements Runnable {
 			users.get(cmds[0]).setLoginCounter(++counter);
 			return "ok";
 		}
-		return "already logged in";
+		return "User already logged.";
 	}
 	
 	private String logout(String[] cmds) {
@@ -97,8 +97,7 @@ public class ClientHandler implements Runnable {
 	
 	private String info(String[] cmds) {
 		if (isLoggedIn(cmds[0])) {
-			return "ok:" + cmds[2] + ":" + isLoggedIn(cmds[2]) + ":" 
-						 + users.get(cmds[2]).getLoginCounter();
+			return "ok:" + cmds[2] + ":" + isLoggedIn(cmds[2]) + ":" + users.get(cmds[2]).getLoginCounter();
 		}
 		return "error:notlogged";
 	}

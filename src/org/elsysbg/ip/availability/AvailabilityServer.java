@@ -31,7 +31,7 @@ public class AvailabilityServer {
 	
 	private synchronized void setRunning() {
 		if (running) {
-			throw new IllegalStateException("Server already running.");
+			throw new IllegalStateException("Server already started.");
 		}
 		running = true;
 	}
