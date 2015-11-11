@@ -6,15 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 public class User {
+	final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH'_'mm'_'ss.SSSZ");
 	private final List<String> times = new ArrayList<String>();
 	private String name;
 	private boolean logged;
 	private int loginCounter;
 	private Socket socket;
-	
-	final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH'_'mm'_'ss.SSSZ");
 	
 	public User(String name, boolean logged, Socket socket) {
 		this.name = name;

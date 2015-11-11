@@ -13,6 +13,7 @@ public class ClientHandler implements Runnable {
 	private final AvailabilityServer availabilityServer;
 	private final Socket socket;
 	private boolean closed;
+	private String currUser;
 	
 	public ClientHandler(AvailabilityServer availabilityServer, Socket socket) {
 		this.availabilityServer = availabilityServer;
@@ -43,27 +44,23 @@ public class ClientHandler implements Runnable {
 	}
 	
 	public String execute(String command) throws IOException {
-		final String[] cmds = command.split(":");
-		if(cmds.length > 1) {
-			switch (cmds[1]) {
-			case "login": 
-				return login(cmds, socket);
-			case "logout":
-				return logout(cmds);
-			case "info":
-				return info(cmds);
-			case "listavailable":
-				return listavailable(cmds);
-			case "listabsent":
-				return listabsent(cmds);
-			case "shutdown":
-				return shutdown(cmds);
-			default:
-				return "error:unknowncommand";
-			}
-		} else {
-			return "error:notenougharguments";
-		}	
+	final String[] cmds = command.split(":");
+	switch (cmds[0]) {
+		case "login": 
+			return login(cmds, socket);
+		case "logout":
+			return logout();
+		case "info":
+			return info(cmds);
+		case "listavailable":
+			return listavailable();
+		case "listabsent":
+			return listabsent();
+		case "shutdown":
+			return shutdown();
+		default:
+			return "error:unknowncommand";
+		}
 	}
 
 	private boolean isLoggedIn(String user) {
@@ -74,43 +71,45 @@ public class ClientHandler implements Runnable {
 	}
 	
 	private String login(String[] cmds, Socket socket) {
-		if (!users.containsKey(cmds[0])) {
-			final User user = new User(cmds[0], true, socket);
-			users.put(cmds[0], user);
+		currUser = cmds[1];
+		if (!users.containsKey(currUser)) {
+			final User user = new User(currUser, true, socket);
+			users.put(currUser, user);		
 			return "ok";
 		}
-		if (!isLoggedIn(cmds[0])) {
-			users.get(cmds[0]).setLogged(true);
-			int counter = users.get(cmds[0]).getLoginCounter();
-			users.get(cmds[0]).setLoginCounter(++counter);
-			users.get(cmds[0]).setTimes(new Date());
+		if (!isLoggedIn(currUser)) {
+			users.get(currUser).setLogged(true);
+			int counter = users.get(currUser).getLoginCounter();
+			users.get(currUser).setLoginCounter(++counter);
+			users.get(currUser).setTimes(new Date());			
 			return "ok";
 		}
 		return "error:alreadyloggedin";
 	}
 	
-	private String logout(String[] cmds) {
-		if (isLoggedIn(cmds[0])) {
-			users.get(cmds[0]).setLogged(false);
-			users.get(cmds[0]).setTimes(new Date());
+	private String logout() {
+		if (isLoggedIn(currUser)) {
+			users.get(currUser).setLogged(false);
+			users.get(currUser).setTimes(new Date());
 			return "ok";
 		}
 		return "error:notlogged";
 	}
 	
 	private String info(String[] cmds) {
-		if (isLoggedIn(cmds[0])) {
+		if (isLoggedIn(currUser)) {
 			String userTimes = "";
-			for (String next : users.get(cmds[2]).getTimes()) {
+			for (String next : users.get(cmds[1]).getTimes()) {
 				userTimes += ":" + next;
 			}
-			return "ok:" + cmds[2] + ":" + isLoggedIn(cmds[2]) + ":" + users.get(cmds[2]).getLoginCounter() + userTimes;
+			return "ok:" + cmds[1] + ":" + isLoggedIn(cmds[1]) + ":" 
+						 + users.get(cmds[1]).getLoginCounter() + userTimes;
 		}
 		return "error:notlogged";
 	}
 	
-	private String listavailable(String[] cmds) {
-		if (isLoggedIn(cmds[0])) {
+	private String listavailable() {
+		if (isLoggedIn(currUser)) {
 			String result = "ok";
 			for (User next : users.values()) {
 				if (next.isLogged()) {
@@ -122,8 +121,8 @@ public class ClientHandler implements Runnable {
 		return "error:notlogged";
 	}
 	
-	private String listabsent(String[] cmds) {
-		if (isLoggedIn(cmds[0])) {
+	private String listabsent() {
+		if (isLoggedIn(currUser)) {
 			String result = "ok";
 			for (User next : users.values()) {
 				if (!next.isLogged()) {
@@ -135,8 +134,8 @@ public class ClientHandler implements Runnable {
 		return "error:notlogged";
 	}
 	
-	private String shutdown(String[] cmds) throws IOException {
-		if (isLoggedIn(cmds[0])) {
+	private String shutdown() throws IOException {
+		if (isLoggedIn(currUser)) {
 			availabilityServer.stopServer();
 			return "ok";
 		}
