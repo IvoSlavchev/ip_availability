@@ -39,6 +39,7 @@ public class CommandHandler implements ICommandHandler {
 	}
 	
 	private String login(String[] cmds, Socket socket) {
+		logout();
 		currUser = cmds[1];
 		if (!users.containsKey(currUser)) {
 			final User user = new User(currUser, true, socket);
@@ -104,6 +105,7 @@ public class CommandHandler implements ICommandHandler {
 	
 	private String shutdown(IAvailabilityServer availabilityServer) throws IOException {
 		if (isLoggedIn(currUser)) {
+			logout();
 			availabilityServer.stopServer();
 			return "ok";
 		}
