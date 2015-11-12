@@ -8,8 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class AvailabilityServer {
-	private final List<ClientHandler> clients = Collections.synchronizedList(new LinkedList<ClientHandler>());
-	
+	private final List<ClientHandler> clients = Collections.synchronizedList(new LinkedList<ClientHandler>());	
 	private final int port;
 	private boolean running;
 	
