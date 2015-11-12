@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AvailabilityServer {
+public class AvailabilityServer implements IAvailabilityServer {
 	private final List<ClientHandler> clients = Collections.synchronizedList(new LinkedList<ClientHandler>());	
 	private final int port;
 	private boolean running;
@@ -16,6 +16,7 @@ public class AvailabilityServer {
 		this.port = port;
 	}
 	
+	@Override
 	public void startServer() throws IOException {
 		setRunning();
 		final ServerSocket serverSocket = new ServerSocket(port);	
@@ -35,18 +36,21 @@ public class AvailabilityServer {
 		running = true;
 	}
 	
+	@Override
 	public synchronized boolean isRunning() {
 		return running;
 	}
 
+	@Override
 	public synchronized void stopServer() throws IOException {
 		running = false;		
-		for (ClientHandler next : clients) {
+		for (IClientHandler next : clients) {
 			next.stopClient();
 		}
 	}
 
-	public void onClientStopped(ClientHandler clientHandler) {
+	@Override
+	public void onClientStopped(IClientHandler clientHandler) {
 		clients.remove(clientHandler);
 	}
 }

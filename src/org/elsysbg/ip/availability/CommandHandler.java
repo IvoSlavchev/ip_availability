@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandHandler {
+public class CommandHandler implements ICommandHandler {
 	private final Map<String, User> users = new HashMap<String, User>();
 	private String currUser;
 	
@@ -17,7 +17,8 @@ public class CommandHandler {
 		return false;
 	}
 	
-	public String execute(String cmd, AvailabilityServer availServer, Socket socket) throws IOException {
+	@Override
+	public String execute(String cmd, IAvailabilityServer availServer, Socket socket) throws IOException {
 		final String[] cmds = cmd.split(":");
 		switch (cmds[0]) {
 			case "login": 
@@ -78,7 +79,7 @@ public class CommandHandler {
 	private String listavailable() {
 		if (isLoggedIn(currUser)) {
 			String result = "ok";
-			for (User next : users.values()) {
+			for (IUser next : users.values()) {
 				if (next.isLogged()) {
 					result += ":" + next.getName();
 				}
@@ -91,7 +92,7 @@ public class CommandHandler {
 	private String listabsent() {
 		if (isLoggedIn(currUser)) {
 			String result = "ok";
-			for (User next : users.values()) {
+			for (IUser next : users.values()) {
 				if (!next.isLogged()) {
 					result += ":" + next.getName();
 				}
@@ -101,7 +102,7 @@ public class CommandHandler {
 		return "error:notlogged";
 	}
 	
-	private String shutdown(AvailabilityServer availabilityServer) throws IOException {
+	private String shutdown(IAvailabilityServer availabilityServer) throws IOException {
 		if (isLoggedIn(currUser)) {
 			availabilityServer.stopServer();
 			return "ok";

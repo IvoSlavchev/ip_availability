@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 
-public class ClientHandler implements Runnable {	
-	private final AvailabilityServer availabilityServer;
+public class ClientHandler implements Runnable, IClientHandler {	
+	private final IAvailabilityServer availabilityServer;
 	private final Socket socket;
 	private boolean closed;
 	
-	public ClientHandler(AvailabilityServer availabilityServer, Socket socket) {
+	public ClientHandler(IAvailabilityServer availabilityServer, Socket socket) {
 		this.availabilityServer = availabilityServer;
 		this.socket = socket;
 		this.closed = false;
@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable {
 		try {
 			final PrintStream out = new PrintStream(socket.getOutputStream());
 			final Scanner scanner = new Scanner(socket.getInputStream());
-			final CommandHandler commandHandler = new CommandHandler();
+			final ICommandHandler commandHandler = new CommandHandler();
 			out.println("Vuvedi komanda: ");
 			while (scanner.hasNextLine()) {									
 				final String line = scanner.nextLine();				
@@ -39,6 +39,7 @@ public class ClientHandler implements Runnable {
 		}
 	}	
 
+	@Override
 	public void stopClient() throws IOException {
 		socket.close();
 		closed = true;
