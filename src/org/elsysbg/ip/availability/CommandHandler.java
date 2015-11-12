@@ -46,14 +46,11 @@ public class CommandHandler implements ICommandHandler {
 			users.put(currUser, user);		
 			return "ok";
 		}
-		if (!isLoggedIn(currUser)) {
-			users.get(currUser).setLogged(true);
-			int counter = users.get(currUser).getLoginCounter();
-			users.get(currUser).setLoginCounter(++counter);
-			users.get(currUser).setTimes(new Date());			
-			return "ok";
-		}
-		return "error:alreadyloggedin";
+		users.get(currUser).setLogged(true);
+		int counter = users.get(currUser).getLoginCounter();
+		users.get(currUser).setLoginCounter(++counter);
+		users.get(currUser).setTimes(new Date());			
+		return "ok";
 	}
 	
 	private String logout() {
