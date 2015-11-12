@@ -8,12 +8,10 @@ import java.net.Socket;
 public class ClientHandler implements Runnable, IClientHandler {	
 	private final IAvailabilityServer availabilityServer;
 	private final Socket socket;
-	private boolean closed;
 	
 	public ClientHandler(IAvailabilityServer availabilityServer, Socket socket) {
 		this.availabilityServer = availabilityServer;
 		this.socket = socket;
-		this.closed = false;
 	}
 	
 	@Override
@@ -31,9 +29,7 @@ public class ClientHandler implements Runnable, IClientHandler {
 			scanner.close();
 			out.close();
 		} catch (IOException e) {
-			if (closed) {  
 				e.printStackTrace();
-			}
 		} finally {
 			availabilityServer.onClientStopped(this);
 		}
@@ -42,6 +38,5 @@ public class ClientHandler implements Runnable, IClientHandler {
 	@Override
 	public void stopClient() throws IOException {
 		socket.close();
-		closed = true;
 	}
 }

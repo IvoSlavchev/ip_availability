@@ -107,7 +107,7 @@ public class CommandHandler implements ICommandHandler {
 		if (isLoggedIn(currUser)) {
 			logout();
 			availabilityServer.stopServer();
-			return "ok";
+			return "";
 		}
 		return "error:notlogged";
 	}
